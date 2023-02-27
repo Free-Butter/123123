@@ -1,18 +1,20 @@
-const body = document.querySelector("#body");
+const div = document.querySelector("div")
+        const input = document.querySelector("input")
+        const button = document.querySelector('button')
 
-const xhr =  new XMLHttpRequest();
+        button.addEventListener("click", () => {
+            div.innerHTML += `<p class="red">我: ${input.value}</p>`
 
-xhr.onreadystatechange = ()=>{
-    if(xhr.readyState === 4){
-        if(xhr.status >= 200 && xhr.status < 300){
-            const data = xhr.response;
-            console.log(data);
-            body.innerHTML = marked.parse(data);
-        }else{
-            body.innerHTML = '请求数据失败,请重试';
-        }
-    }
-}
+            fetch("https://chatgpt-web-production-634c.up.railway.app/api/chat", {
+                method: 'POST', headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ prompt: input.value, options: {} }),
+            })
+                .then(res => res.json())
+                .then(data => {
+                    div.innerHTML += `<p class="blue">ChatGpt: ${data.data.text}</p>`
+                })
 
-xhr.open('GET','https://raw.githubusercontent.com/WTFAcademy/WTFgm/main/README.md');
-xhr.send();
+            input.value = ""
+        })
